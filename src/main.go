@@ -8,7 +8,7 @@ import (
 	"os"
 )
 
-func rgbToHsv(r, g, b uint32) float64 {
+func rgbToHsv(r, g, b uint32) (float64, float64, float64) {
 	red := float64(r>>8) / 255.0
 	green := float64(g>>8) / 255.0
 	blue := float64(b>>8) / 255.0
@@ -17,7 +17,7 @@ func rgbToHsv(r, g, b uint32) float64 {
 	min := math.Max(red, math.Min(green, blue))
 	delta := max - min
 
-	var hue float64
+	var hue, sat, val float64
 
 	if delta == 0 {
 		hue = 0
@@ -32,7 +32,16 @@ func rgbToHsv(r, g, b uint32) float64 {
 	if hue < 0 {
 		hue += 360
 	}
-	return hue
+
+	if max == 0 {
+		sat = 0
+	} else {
+		sat = delta / max
+	}
+
+	val = max
+
+	return hue, sat, val
 }
 
 func main() {
@@ -54,10 +63,10 @@ func main() {
 	for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
 		for x := bounds.Min.X; x < bounds.Max.X; x++ {
 			r, g, b, _ := img.At(x, y).RGBA()
-			hue := rgbToHsv(r, g, b)
+			hue, sat, val := rgbToHsv(r, g, b)
 
 			if x == bounds.Max.X/2 && y == bounds.Max.Y/2 {
-				fmt.Printf("Hue: %.2f degrees\n", hue)
+				fmt.Printf("Hue: %.2f, Sat: %.2f, Val %.2f\n", hue, sat, val)
 			}
 		}
 	}
