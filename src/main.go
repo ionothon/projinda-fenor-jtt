@@ -45,28 +45,35 @@ func rgbToHsv(r, g, b uint32) (float64, float64, float64) {
 }
 
 func main() {
-	file, err := os.Open("../img/test8.jpg")
+
+	files, err := os.ReadDir("../img")
 	if err != nil {
-		fmt.Println("Hittade inte bilden: ", err)
+		fmt.Println("Kunde inte läsa img-mappen:", err)
 		return
 	}
-	defer file.Close()
-
-	img, _, err := image.Decode(file)
-	if err != nil {
-		fmt.Println("Kunde inte läsa bilden: ", err)
-		return
-	}
-
-	bounds := img.Bounds()
-
-	for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
-		for x := bounds.Min.X; x < bounds.Max.X; x++ {
-			r, g, b, _ := img.At(x, y).RGBA()
-			hue, sat, val := rgbToHsv(r, g, b)
-
-			if x == bounds.Max.X/2 && y == bounds.Max.Y/2 {
-				fmt.Printf("Hue: %.2f, Sat: %.2f, Val %.2f\n", hue, sat, val)
+	for _, entry := range files {
+		if entry.IsDir() {
+			continue
+		}
+		file, err := os.Open("../img/" + entry.Name())
+		if err != nil {
+			fmt.Println("Hittade inte bilden:", entry.Name(), err)
+			continue
+		}
+		img, _, err := image.Decode(file)
+		file.Close()
+		if err != nil {
+			fmt.Println("Kunde inte läsa bilden:", entry.Name(), err)
+			continue
+		}
+		bounds := img.Bounds()
+		for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
+			for x := bounds.Min.X; x < bounds.Max.X; x++ {
+				r, g, b, _ := img.At(x, y).RGBA()
+				hue, sat, val := rgbToHsv(r, g, b)
+				if x == bounds.Max.X/2 && y == bounds.Max.Y/2 {
+					fmt.Printf("%s -> Hue: %.2f, Sat: %.2f, Val %.2f\n", entry.Name(), hue, sat, val)
+				}
 			}
 		}
 	}
