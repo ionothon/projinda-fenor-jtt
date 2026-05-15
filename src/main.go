@@ -44,6 +44,36 @@ func rgbToHsv(r, g, b uint32) (float64, float64, float64) {
 	return hue, sat, val
 }
 
+func classifyColor(hue, sat, val float64) string {
+	if val < 0.20 {
+		return "black"
+	}
+
+	if sat < 0.20 && val > 0.80 {
+		return "white"
+	}
+
+	if sat < 0.20 {
+		return "gray"
+	}
+
+	if hue < 15 || hue >= 345 {
+		return "red"
+	} else if hue < 45 {
+		return "orange"
+	} else if hue < 70 {
+		return "yellow"
+	} else if hue < 160 {
+		return "green"
+	} else if hue < 250 {
+		return "blue"
+	} else if hue < 290 {
+		return "purple"
+	} else {
+		return "pink"
+	}
+}
+
 func main() {
 
 	files, err := os.ReadDir("../img")
@@ -72,7 +102,8 @@ func main() {
 				r, g, b, _ := img.At(x, y).RGBA()
 				hue, sat, val := rgbToHsv(r, g, b)
 				if x == bounds.Max.X/2 && y == bounds.Max.Y/2 {
-					fmt.Printf("%s -> Hue: %.2f, Sat: %.2f, Val %.2f\n", entry.Name(), hue, sat, val)
+					category := classifyColor(hue, sat, val)
+					fmt.Printf("%s -> %s (Hue: %.2f, Sat: %.2f, Val: %.2f)\n", entry.Name(), category, hue, sat, val)
 				}
 			}
 		}
