@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+
+<html lang="sv">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image sorter</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background: #5E5D5C;
+            margin: 20px;
+        }
+        .filter-selection {
+            margin-bottom: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        button {
+            padding: 10px 15px;
+            margin-right: 5px;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button:hover {background: #211F1F;}
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .card {
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .card img {
+            max-width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Image sorter</h1>
+    <div class="filter-section">
+        <h3>Filter by color:</h3>
+        <button onclick="fetchImages('color=')">Show all</button>
+        <button onclick="fetchImages('color=red')">Red</button>
+        <button onclick="fetchImages('color=green')">Green</button>
+        <button onclick="fetchImages('color=blue')">Blue</button>
+    </div>
+    <div class="filter-section">
+        <h3>Filter by tone:</h3>
+        <button onclick="fetchImages('tone=')">Show all</button>
+        <button onclick="fetchImages('tone=warm')">Show all</button>
+        <button onclick="fetchImages('tone=cool')">Show all</button>
+    </div>
+    <div id="image-container" class="grid"></div>
+    <script src="script.js"></script>
+</body>
+
+</html>
