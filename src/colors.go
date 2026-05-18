@@ -42,31 +42,31 @@ func rgbToHsv(r, g, b uint32) (float64, float64, float64) {
 
 func classifyColor(h, s, v float64) string {
 	if v <= 0.15 {
-		return "Black"
+		return "black"
 	}
 	if s < 0.15 {
 		if v > 0.85 {
-			return "White"
+			return "white"
 		}
-		return "Grey"
+		return "grey"
 	}
 
 	if h >= 345 || h < 20 {
-		return "Red"
+		return "red"
 	} else if h >= 20 && h < 45 {
-		return "Orange"
+		return "orange"
 	} else if h >= 45 && h < 70 {
-		return "Yellow"
+		return "yellow"
 	} else if h >= 70 && h < 145 {
-		return "Green"
+		return "green"
 	} else if h >= 145 && h < 195 {
-		return "Cyan"
+		return "cyan"
 	} else if h >= 195 && h < 255 {
-		return "Blue"
+		return "blue"
 	} else if h >= 255 && h < 305 {
-		return "Purple"
+		return "purple"
 	} else if h >= 305 && h < 345 {
-		return "Pink"
+		return "pink"
 	}
-	return "Unknown"
+	return "unknown"
 }
