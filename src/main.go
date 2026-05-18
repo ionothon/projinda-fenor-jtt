@@ -79,14 +79,14 @@ func classifyColor(hue, sat, val float64) string {
 	return "pink"
 }
 
-func analyzeImages() []ImageResult {
+func analyzeImages(colorFilter, toneFilter string) []ImageResult {
 	files, err := os.ReadDir("../img")
 	if err != nil {
 		fmt.Println("Kunde inte läsa img-mappen:", err)
 		return nil
 	}
 
-	var results []ImageResult
+	results := []ImageResult{}
 
 	for _, entry := range files {
 		if entry.IsDir() {
@@ -117,6 +117,14 @@ func analyzeImages() []ImageResult {
 		r, g, b, _ := img.At(centerX, centerY).RGBA()
 		hue, sat, val := rgbToHsv(r, g, b)
 		category := classifyColor(hue, sat, val)
+		tone := getTone(hue)
+
+		if colorFilter != "" && category != colorFilter {
+			continue
+		}
+		if toneFilter != "" && tone != toneFilter {
+			continue
+		}
 
 		results = append(results, ImageResult{
 			Name:     name,
@@ -130,8 +138,17 @@ func analyzeImages() []ImageResult {
 	return results
 }
 
+func getTone(hue float64) string {
+	if hue < 70 || hue >= 290 {
+		return "warm"
+	}
+	return "cool"
+}
+
 func imagesHandler(w http.ResponseWriter, r *http.Request) {
-	results := analyzeImages()
+	colorFilter := r.URL.Query().Get("color")
+	toneFilter := r.URL.Query().Get("tone")
+	results := analyzeImages(colorFilter, toneFilter)
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(results)
