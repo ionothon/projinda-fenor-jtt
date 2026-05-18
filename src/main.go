@@ -12,6 +12,7 @@ import (
 	"strings"
 )
 
+// ImageResult stores analyzed information about image
 type ImageResult struct {
 	Name     string  `json:"name"`
 	Category string  `json:"category"`
@@ -20,7 +21,10 @@ type ImageResult struct {
 	Val      float64 `json:"val"`
 }
 
+// analyzeImages reads images from the img folder,
+// analyzes their colors and applies filters.
 func analyzeImages(colorFilter, toneFilter string) []ImageResult {
+	// Read all files inside the image folder.
 	files, err := os.ReadDir("../public/img")
 	if err != nil {
 		fmt.Println("Kunde inte läsa img-mappen:", err)
@@ -30,10 +34,12 @@ func analyzeImages(colorFilter, toneFilter string) []ImageResult {
 	results := []ImageResult{}
 
 	for _, entry := range files {
+		// Skip directories.
 		if entry.IsDir() {
 			continue
 		}
 
+		// Skip non-image files
 		name := entry.Name()
 		if !strings.HasSuffix(name, ".jpg") && !strings.HasSuffix(name, ".jpeg") && !strings.HasSuffix(name, ".png") {
 			continue
@@ -50,12 +56,15 @@ func analyzeImages(colorFilter, toneFilter string) []ImageResult {
 		if err != nil {
 			continue
 		}
-
+		// colorCount counts how many pixels belong to each color category
 		colorCount := make(map[string]int)
+		// hsvTracker stores the HSV values for each color category
 		hsvTracker := make(map[string][]float64)
 
+		// Gets image dimensions
 		bounds := img.Bounds()
 
+		// Iterates through each pixel, converting RGB to HSC and categorizing it while increasing the count
 		for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
 			for x := bounds.Min.X; x < bounds.Max.X; x++ {
 				r, g, b, _ := img.At(x, y).RGBA()
@@ -68,23 +77,26 @@ func analyzeImages(colorFilter, toneFilter string) []ImageResult {
 		}
 		category := "Unknown"
 		maxPixels := 0
-
+		// Finds the dominant color by comparing pixel counts for each category
 		for color, count := range colorCount {
 			if count > maxPixels {
 				maxPixels = count
 				category = color
 			}
 		}
-
+		// Gets HSV values for the dominant color
 		hue := hsvTracker[category][0]
 		sat := hsvTracker[category][1]
 		val := hsvTracker[category][2]
 
+		// Determine cool or warm tone
 		tone := getTone(hue)
 
+		// Skip image if it does not match selected color filter
 		if colorFilter != "" && category != colorFilter {
 			continue
 		}
+		// Skip image if it does not match selected tone filter
 		if toneFilter != "" && tone != toneFilter {
 			continue
 		}
@@ -108,55 +120,78 @@ func getTone(hue float64) string {
 	return "cool"
 }
 
-func imagesHandler(w http.ResponseWriter, r *http.Request) {
-	colorFilter := r.URL.Query().Get("color")
-	toneFilter := r.URL.Query().Get("tone")
+// imagesHandler handles requests to the image API, reading query filters in URL and converting response to JSON
+func imagesHandler(response http.ResponseWriter, request *http.Request) {
+	colorFilter := request.URL.Query().Get("color")
+	toneFilter := request.URL.Query().Get("tone")
 	results := analyzeImages(colorFilter, toneFilter)
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(results)
+	response.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(response).Encode(results)
 }
 
-func uploadHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+// uploadHandler handles image uploads from the frontend
+func uploadHandler(response http.ResponseWriter, request *http.Request) {
+
+	// Only allow POST requests for uploads
+	if request.Method != http.MethodPost {
+		http.Error(response, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
-	err := r.ParseMultipartForm(32 << 20)
+	// Parse uploaded form data.
+	err := request.ParseMultipartForm(32 << 20)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(response, err.Error(), http.StatusBadRequest)
 		return
 	}
-	files := r.MultipartForm.File["uploadedImages"]
 
+	// Get uploaded image files from the form.
+	files := request.MultipartForm.File["uploadedImages"]
+
+	// Loop through uploaded files.
 	for _, fileHeader := range files {
+
+		// Open uploaded file.
 		file, err := fileHeader.Open()
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			http.Error(response, err.Error(), http.StatusInternalServerError)
 			return
 		}
 		defer file.Close()
-		destinationFile, err := os.Create("../public/img" + fileHeader.Filename)
+
+		// Create destination file in image folder.
+		destinationFile, err := os.Create("../public/img/" + fileHeader.Filename)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			http.Error(response, err.Error(), http.StatusInternalServerError)
 			return
 		}
 		defer destinationFile.Close()
 
+		// Copy uploaded file data into destination file.
 		_, err = io.Copy(destinationFile, file)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			http.Error(response, err.Error(), http.StatusInternalServerError)
 			return
 		}
 	}
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("Upload successful!"))
+
+	response.WriteHeader(http.StatusOK)
+
+	// Return success response after upload.
+	response.Write([]byte("Upload successful!"))
 }
 
+// Register frontend, API endpoints and start local server.
 func main() {
+
+	// Serve frontend files from the public folder.
 	http.Handle("/", http.FileServer(http.Dir("../public")))
+
+	// Register API endpoint for image analysis.
 	http.HandleFunc("/api/images", imagesHandler)
+
+	// Register API endpoint for image uploads.
 	http.HandleFunc("/api/upload", uploadHandler)
 
 	fmt.Println("Server running at http://localhost:8080")
