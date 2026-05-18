@@ -117,6 +117,7 @@ func imagesHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	http.Handle("/", http.FileServer(http.Dir("./public")))
 	http.HandleFunc("/api/images", imagesHandler)
 
 	fmt.Println("Server running at http://localhost:8080")
