@@ -67,10 +67,17 @@
     <h1>Image sorter</h1>
     <div class="filter-section">
         <h3>Filter by color:</h3>
-        <button onclick="fetchImages('color=')">Show all</button>
-        <button onclick="fetchImages('color=red')">Red</button>
-        <button onclick="fetchImages('color=green')">Green</button>
-        <button onclick="fetchImages('color=blue')">Blue</button>
+        <label><input type="checkbox" class="color-filter" value="red" onchange="filterChanged()"> Red</label>
+        <label><input type="checkbox" class="color-filter" value="orange" onchange="filterChanged()"> Orange</label>
+        <label><input type="checkbox" class="color-filter" value="yellow" onchange="filterChanged()"> Yellow</label>
+        <label><input type="checkbox" class="color-filter" value="green" onchange="filterChanged()"> Green</label>
+        <label><input type="checkbox" class="color-filter" value="cyan" onchange="filterChanged()"> Cyan</label>
+        <label><input type="checkbox" class="color-filter" value="blue" onchange="filterChanged()"> Blue</label>
+        <label><input type="checkbox" class="color-filter" value="purple" onchange="filterChanged()"> Purple</label>
+        <label><input type="checkbox" class="color-filter" value="pink" onchange="filterChanged()"> Pink</label>
+        <label><input type="checkbox" class="color-filter" value="black" onchange="filterChanged()"> Black</label>
+        <label><input type="checkbox" class="color-filter" value="white" onchange="filterChanged()"> White</label>
+        <label><input type="checkbox" class="color-filter" value="grey" onchange="filterChanged()"> Grey</label>
     </div>
     <div class="filter-section">
         <h3>Filter by tone:</h3>

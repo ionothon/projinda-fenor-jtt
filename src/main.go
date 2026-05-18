@@ -27,7 +27,7 @@ func analyzeImages(colorFilter, toneFilter string) []ImageResult {
 	// Read all files inside the image folder.
 	files, err := os.ReadDir("../public/img")
 	if err != nil {
-		fmt.Println("Kunde inte läsa img-mappen:", err)
+		fmt.Println("Could not read img folder:", err)
 		return nil
 	}
 
@@ -47,6 +47,7 @@ func analyzeImages(colorFilter, toneFilter string) []ImageResult {
 
 		file, err := os.Open("../public/img/" + name)
 		if err != nil {
+			fmt.Printf("Something went wrong decoding the file %s: %v\n", name, err)
 			continue
 		}
 
@@ -93,7 +94,7 @@ func analyzeImages(colorFilter, toneFilter string) []ImageResult {
 		tone := getTone(hue)
 
 		// Skip image if it does not match selected color filter
-		if colorFilter != "" && category != colorFilter {
+		if colorFilter != "" && !strings.Contains(colorFilter, category) {
 			continue
 		}
 		// Skip image if it does not match selected tone filter

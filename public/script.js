@@ -84,4 +84,13 @@ async function uploadFiles(files) {
     }
 }
 
+function filterChanged() {
+   const checkedColors = Array.from(document.querySelectorAll('.color-filter:checked'))
+   .map(cb => cb.value);
+
+   const colorParam = checkedColors.join(',');
+   fetchImages(`color=${colorParam}`);
+}
+
+
 fetchImages('');
