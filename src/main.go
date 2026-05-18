@@ -14,7 +14,7 @@ func rgbToHsv(r, g, b uint32) (float64, float64, float64) {
 	blue := float64(b>>8) / 255.0
 
 	max := math.Max(red, math.Max(green, blue))
-	min := math.Max(red, math.Min(green, blue))
+	min := math.Min(red, math.Min(green, blue))
 	delta := max - min
 
 	var hue, sat, val float64
@@ -24,9 +24,9 @@ func rgbToHsv(r, g, b uint32) (float64, float64, float64) {
 	} else if max == red {
 		hue = 60 * math.Mod((green-blue)/delta, 6)
 	} else if max == green {
-		hue = 60 * ((blue - red) + 2)
+		hue = 60 * (((blue - red) / delta) + 2)
 	} else if max == blue {
-		hue = 60 * ((red - green) + 4)
+		hue = 60 * (((red - green) / delta) + 4)
 	}
 
 	if hue < 0 {
