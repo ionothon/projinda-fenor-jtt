@@ -20,7 +20,7 @@ type ImageResult struct {
 }
 
 func analyzeImages(colorFilter, toneFilter string) []ImageResult {
-	files, err := os.ReadDir("../img")
+	files, err := os.ReadDir("../public/img")
 	if err != nil {
 		fmt.Println("Kunde inte läsa img-mappen:", err)
 		return nil
@@ -38,7 +38,7 @@ func analyzeImages(colorFilter, toneFilter string) []ImageResult {
 			continue
 		}
 
-		file, err := os.Open("../img/" + name)
+		file, err := os.Open("../public/img/" + name)
 		if err != nil {
 			continue
 		}
@@ -117,7 +117,7 @@ func imagesHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	http.Handle("/", http.FileServer(http.Dir("./public")))
+	http.Handle("/", http.FileServer(http.Dir("../public")))
 	http.HandleFunc("/api/images", imagesHandler)
 
 	fmt.Println("Server running at http://localhost:8080")
