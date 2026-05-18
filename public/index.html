@@ -45,6 +45,21 @@
             object-fit: cover;
             border-radius: 4px;
         }
+        .drop-zone {
+            border: 3px dashed #aaaaaa;
+            padding: 40px;
+            text-align: center;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .drop-zone.hover {
+            background: #e0f7fa;
+            border-color: #00acc1;
+            transform: scale(1.01);
+        }
     </style>
 </head>
 
@@ -60,11 +75,15 @@
     <div class="filter-section">
         <h3>Filter by tone:</h3>
         <button onclick="fetchImages('tone=')">Show all</button>
-        <button onclick="fetchImages('tone=warm')">Show all</button>
-        <button onclick="fetchImages('tone=cool')">Show all</button>
+        <button onclick="fetchImages('tone=warm')">Warm</button>
+        <button onclick="fetchImages('tone=cool')">Cool</button>
+    </div>
+    <div id="drop-zone" class="drop-zone">
+        <h3>Drag and drop pictures to upload</h3>
+        <p>Or click in the box to chose files from computer</p>
+        <input type="file" id="file-input" accept="image/*" multiple style="display: none;">
     </div>
     <div id="image-container" class="grid"></div>
     <script src="script.js"></script>
 </body>
-
 </html>
