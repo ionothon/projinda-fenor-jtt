@@ -1,7 +1,8 @@
 async function fetchImages(filterParam) {
     
+    const url = `/api/images?${filterParam}`;
+    
     try {
-        const url = `/api/images?${filterParam}`;
 
         const response = await fetch(url);
         const images = await response.json();
