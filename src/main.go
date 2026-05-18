@@ -50,13 +50,35 @@ func analyzeImages(colorFilter, toneFilter string) []ImageResult {
 			continue
 		}
 
-		bounds := img.Bounds()
-		centerX := bounds.Max.X / 2
-		centerY := bounds.Max.Y / 2
+		colorCount := make(map[string]int)
+		hsvTracker := make(map[string][]float64)
 
-		r, g, b, _ := img.At(centerX, centerY).RGBA()
-		hue, sat, val := rgbToHsv(r, g, b)
-		category := classifyColor(hue, sat, val)
+		bounds := img.Bounds()
+
+		for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
+			for x := bounds.Min.X; x < bounds.Max.X; x++ {
+				r, g, b, _ := img.At(x, y).RGBA()
+
+				h, s, v := rgbToHsv(r, g, b)
+				cat := classifyColor(h, s, v)
+				colorCount[cat]++
+				hsvTracker[cat] = []float64{h, s, v}
+			}
+		}
+		category := "Unknown"
+		maxPixels := 0
+
+		for color, count := range colorCount {
+			if count > maxPixels {
+				maxPixels = count
+				category = color
+			}
+		}
+
+		hue := hsvTracker[category][0]
+		sat := hsvTracker[category][1]
+		val := hsvTracker[category][2]
+
 		tone := getTone(hue)
 
 		if colorFilter != "" && category != colorFilter {
