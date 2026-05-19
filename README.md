@@ -15,6 +15,7 @@ To help complete the project we used AI tools such as ChatGPT and Gemini, as wel
 ## Demo
 
 ![Demo](public/demo.png)
+![Demo](public/demo2.png)
 
 ## Features
 
