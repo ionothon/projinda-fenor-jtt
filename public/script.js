@@ -100,4 +100,17 @@ function clearColorFilters() {
     filterChanged();
 }
 
+const firstButton = document.querySelector(".filter-selection button");
+if (firstButton) {
+    firstButton.classList.add("active");
+}
+document.querySelectorAll("filter-selection button").forEach(button => {
+    button.addEventListener("click", function() {
+        document.querySelectorAll("filter-selection button").forEach(btn => {
+            btn.classList.remove("active");
+        });
+        this.classList.add("active");
+    });
+});
+
 fetchImages('');
