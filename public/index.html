@@ -9,8 +9,30 @@
     <style>
         body {
             font-family: sans-serif;
-            background: #5E5D5C;
-            margin: 20px;
+            background: #ffffff;
+            margin: 0;
+        }
+        .main-header {
+            display: flex;
+            justify-content: flex-start;
+            align-items: flex-start; padding-top: 20px;
+            height: 250px;
+            padding-left: 30px;
+            padding-bottom: 20px;
+            margin-bottom: 25px;
+            background-image: linear-gradient(to bottom, transparent 20%, #ffffff 100%), url('regnbage.jpg');
+            background-size: cover;
+            background-position: center;
+            box-sizing: border-box;
+        }
+        .main-header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+        }
+        .main-content {
+            padding: 20px;
         }
         .filter-selection {
             margin-bottom: 20px;
@@ -46,10 +68,11 @@
             border-radius: 4px;
         }
         .drop-zone {
-            border: 3px dashed #aaaaaa;
+            border: none;
             padding: 40px;
             text-align: center;
-            background: white;
+            background: rgb(229, 229, 229);
+            box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.15);
             border-radius: 8px;
             margin-bottom: 25px;
             cursor: pointer;
@@ -64,33 +87,42 @@
 </head>
 
 <body>
-    <h1>Image sorter</h1>
-    <div class="filter-section">
-        <h3>Filter by color:</h3>
-        <label><input type="checkbox" class="color-filter" value="red" onchange="filterChanged()"> Red</label>
-        <label><input type="checkbox" class="color-filter" value="orange" onchange="filterChanged()"> Orange</label>
-        <label><input type="checkbox" class="color-filter" value="yellow" onchange="filterChanged()"> Yellow</label>
-        <label><input type="checkbox" class="color-filter" value="green" onchange="filterChanged()"> Green</label>
-        <label><input type="checkbox" class="color-filter" value="cyan" onchange="filterChanged()"> Cyan</label>
-        <label><input type="checkbox" class="color-filter" value="blue" onchange="filterChanged()"> Blue</label>
-        <label><input type="checkbox" class="color-filter" value="purple" onchange="filterChanged()"> Purple</label>
-        <label><input type="checkbox" class="color-filter" value="pink" onchange="filterChanged()"> Pink</label>
-        <label><input type="checkbox" class="color-filter" value="black" onchange="filterChanged()"> Black</label>
-        <label><input type="checkbox" class="color-filter" value="white" onchange="filterChanged()"> White</label>
-        <label><input type="checkbox" class="color-filter" value="grey" onchange="filterChanged()"> Grey</label>
+    <header class="main-header">
+        <h1>Image Color Analyzer</h1>
+    </header>
+    
+    <div class="main-content">
+        <div id="drop-zone" class="drop-zone">
+            <h3>Drag and drop pictures to upload</h3>
+            <p>Or click in the box to chose files from computer</p>
+            <input type="file" id="file-input" accept="image/*" multiple style="display: none;">
+        </div>
+
+        <div class="filter-section">
+            <h3>Filter by color:</h3>
+            <label><input type="checkbox" class="color-filter" value="red" onchange="filterChanged()"> Red</label>
+            <label><input type="checkbox" class="color-filter" value="orange" onchange="filterChanged()"> Orange</label>
+            <label><input type="checkbox" class="color-filter" value="yellow" onchange="filterChanged()"> Yellow</label>
+            <label><input type="checkbox" class="color-filter" value="green" onchange="filterChanged()"> Green</label>
+            <label><input type="checkbox" class="color-filter" value="cyan" onchange="filterChanged()"> Cyan</label>
+            <label><input type="checkbox" class="color-filter" value="blue" onchange="filterChanged()"> Blue</label>
+            <label><input type="checkbox" class="color-filter" value="purple" onchange="filterChanged()"> Purple</label>
+            <label><input type="checkbox" class="color-filter" value="pink" onchange="filterChanged()"> Pink</label>
+            <label><input type="checkbox" class="color-filter" value="black" onchange="filterChanged()"> Black</label>
+            <label><input type="checkbox" class="color-filter" value="white" onchange="filterChanged()"> White</label>
+            <label><input type="checkbox" class="color-filter" value="grey" onchange="filterChanged()"> Grey</label>
+
+            <button type="button" onclick="clearColorFilters()" style="margin-left: 15px;">Clear filters</button>
+        </div>
+
+        <div class="filter-section">
+            <h3>Filter by tone:</h3>
+            <button onclick="fetchImages('tone=')">Show all</button>
+            <button onclick="fetchImages('tone=warm')">Warm</button>
+            <button onclick="fetchImages('tone=cool')">Cool</button>
+        </div>
+        <div id="image-container" class="grid"></div>
     </div>
-    <div class="filter-section">
-        <h3>Filter by tone:</h3>
-        <button onclick="fetchImages('tone=')">Show all</button>
-        <button onclick="fetchImages('tone=warm')">Warm</button>
-        <button onclick="fetchImages('tone=cool')">Cool</button>
-    </div>
-    <div id="drop-zone" class="drop-zone">
-        <h3>Drag and drop pictures to upload</h3>
-        <p>Or click in the box to chose files from computer</p>
-        <input type="file" id="file-input" accept="image/*" multiple style="display: none;">
-    </div>
-    <div id="image-container" class="grid"></div>
     <script src="script.js"></script>
 </body>
 </html>

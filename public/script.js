@@ -92,5 +92,12 @@ function filterChanged() {
    fetchImages(`color=${colorParam}`);
 }
 
+function clearColorFilters() {
+    const colorCheckboxes = document.querySelectorAll('.color-filter');
+    colorCheckboxes.forEach(chckbox => {
+        chckbox.checked = false;
+    });
+    filterChanged();
+}
 
 fetchImages('');

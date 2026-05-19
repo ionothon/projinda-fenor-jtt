@@ -65,7 +65,7 @@ func analyzeImages(colorFilter, toneFilter string) []ImageResult {
 		// Gets image dimensions
 		bounds := img.Bounds()
 
-		// Iterates through each pixel, converting RGB to HSC and categorizing it while increasing the count
+		// Iterates through each pixel, converting RGB to HSV and categorizing it while increasing the count
 		for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
 			for x := bounds.Min.X; x < bounds.Max.X; x++ {
 				r, g, b, _ := img.At(x, y).RGBA()
