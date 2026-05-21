@@ -113,4 +113,43 @@ document.querySelectorAll("filter-selection button").forEach(button => {
     });
 });
 
+const script = document.createElement('script');
+script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+document.head.appendChild(script);
+
+script.onload = () => {
+    const downloadBtn = document.getElementById('download-zip-btn');
+    if (!downloadBtn) return;
+    downloadBtn.addEventListener('click', async () => {
+        const zip = new JSZip();
+        const images = document.querySelectorAll('.card img');
+
+        if (images.length == 0) {
+            alert('No pictures to download');
+            return;
+        }
+        downloadBtn.innerText = 'Packing images...';
+
+        for (let i = 0; i < images.length; i++) {
+            try {
+                const imgUrl = images[i].src;
+                const response = await fetch(imgUrl);
+                const blob = await response.blob();
+                zip.file(`pic-${i + 1}.jpg`, blob);
+            } catch (err) {
+                console.error('Could not pack image:', err);
+            }
+        }
+        zip.generateAsync({ type: 'blob' }).then((content) => {
+            const element = document.createElement('a');
+            element.href = URL.createObjectURL(content);
+            element.download = 'my-color-analyzis.zip';
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
+            downloadBtn.innerText = 'Download filtered images (.zip)';
+        });
+    });
+};
+
 fetchImages('');
